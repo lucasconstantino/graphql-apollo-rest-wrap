@@ -1,6 +1,18 @@
 import { makeExecutableSchema } from 'graphql-tools'
 
 const typeDefs = `
+  type Post {
+    id: Int!
+    title: String
+    body: String
+  }
+
+  type User {
+    id: Int!
+    username: String
+    email: String
+  }
+
   type Query {
   }
 
