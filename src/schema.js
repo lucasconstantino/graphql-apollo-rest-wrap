@@ -2,7 +2,6 @@ import { makeExecutableSchema } from 'graphql-tools'
 
 const typeDefs = `
   type Query {
-    helloWorld: String!
   }
 
   schema {
@@ -12,7 +11,6 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    helloWorld: () => 'Hello!'
   }
 }
 
