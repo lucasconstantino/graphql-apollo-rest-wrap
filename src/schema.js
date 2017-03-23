@@ -12,6 +12,7 @@ const typeDefs = `
     id: Int!
     username: String
     email: String
+    posts: [Post]
   }
 
   type Query {
@@ -36,6 +37,7 @@ const user = (root, { id }) => fetch(`${endpoint}/users/${id}`).then(toJSON)
 const users = () => fetch(`${endpoint}/users`).then(toJSON)
 
 const author = ({ userId }) => fetch(`${endpoint}/users/${userId}`).then(toJSON)
+const userPosts = ({ id }) => fetch(`${endpoint}/users/${id}/posts`).then(toJSON)
 
 const resolvers = {
   Query: {
@@ -47,6 +49,9 @@ const resolvers = {
   Post: {
     author,
   },
+  User: {
+    posts: userPosts,
+  }
 }
 
 export const schema = makeExecutableSchema({ typeDefs, resolvers })
