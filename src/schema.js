@@ -5,6 +5,7 @@ const typeDefs = `
     id: Int!
     title: String
     body: String
+    author: User
   }
 
   type User {
@@ -34,12 +35,17 @@ const posts = () => fetch(`${endpoint}/posts`).then(toJSON)
 const user = (root, { id }) => fetch(`${endpoint}/users/${id}`).then(toJSON)
 const users = () => fetch(`${endpoint}/users`).then(toJSON)
 
+const author = ({ userId }) => fetch(`${endpoint}/users/${userId}`).then(toJSON)
+
 const resolvers = {
   Query: {
     post,
     posts,
     user,
     users,
+  },
+  Post: {
+    author,
   },
 }
 
