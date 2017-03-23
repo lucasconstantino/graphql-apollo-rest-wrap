@@ -14,6 +14,10 @@ const typeDefs = `
   }
 
   type Query {
+    posts: [Post]
+    post (id: Int!): Post
+    users: [User]
+    user: User
   }
 
   schema {
@@ -21,9 +25,22 @@ const typeDefs = `
   }
 `
 
+const endpoint = 'https://jsonplaceholder.typicode.com'
+const toJSON = res => res.json()
+
+const post = (root, { id }) => fetch(`${endpoint}/posts/${id}`).then(toJSON)
+const posts = () => fetch(`${endpoint}/posts`).then(toJSON)
+
+const user = (root, { id }) => fetch(`${endpoint}/users/${id}`).then(toJSON)
+const users = () => fetch(`${endpoint}/users`).then(toJSON)
+
 const resolvers = {
   Query: {
-  }
+    post,
+    posts,
+    user,
+    users,
+  },
 }
 
 export const schema = makeExecutableSchema({ typeDefs, resolvers })
