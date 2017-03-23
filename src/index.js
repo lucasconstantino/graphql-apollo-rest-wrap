@@ -1,12 +1,10 @@
 import { graphql } from 'graphql'
 import { schema } from './schema'
 
-const query = '{ helloWorld }'
+const query = '{ posts { id, title, body } }'
 
-graphql(schema, query).then(result => {
-  // Prints
-  // {
-  //   data: { helloWorld: "Hello!" }
-  // }
-  console.log(result)
-})
+// Prints
+// {
+//   data: { posts: Array[100] }
+// }
+graphql(schema, query).then(console.log)
