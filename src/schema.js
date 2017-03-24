@@ -22,8 +22,13 @@ const typeDefs = `
     user: User
   }
 
+  type Mutation {
+    addPost(title: String!, body: String!, userId: Int!): Post!
+  }
+
   schema {
     query: Query
+    mutation: Mutation
   }
 `
 
@@ -39,12 +44,18 @@ const users = () => fetch(`${endpoint}/users`).then(toJSON)
 const author = ({ userId }) => fetch(`${endpoint}/users/${userId}`).then(toJSON)
 const userPosts = ({ id }) => fetch(`${endpoint}/users/${id}/posts`).then(toJSON)
 
+const addPost = (root, post) => fetch(`${endpoint}/posts`, { method: 'POST', body: post })
+  .then(toJSON).then(({ id }) => ({ id, ...post }))
+
 const resolvers = {
   Query: {
     post,
     posts,
     user,
     users,
+  },
+  Mutation: {
+    addPost,
   },
   Post: {
     author,
