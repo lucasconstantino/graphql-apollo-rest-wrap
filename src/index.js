@@ -1,9 +1,9 @@
-import { graphql } from 'graphql'
-import { schema } from './schema'
+import { client } from './client'
+import gql from 'graphql-tag'
 
-const query = `
-  mutation {
-    addPost(userId: 1, title: "Meu post", body: "Meu texto!") {
+const query = gql`
+  query Post ($id: Int!) {
+    post (id: $id) {
       id
       body
       title
@@ -21,4 +21,4 @@ const query = `
 //     }
 //   }
 // }
-graphql(schema, query).then(console.log)
+client.query({ query, variables: { id: 1 } }).then(console.log)
