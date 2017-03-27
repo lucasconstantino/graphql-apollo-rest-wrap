@@ -26,7 +26,6 @@ yarn add --save graphql graphql-tools
 
 ### Building the GraphQL Schema
 
-
 First things first. Building a schema is rather easy with [graphql-tools](https://github.com/apollographql/graphql-tools). You start by defining a schema using the [GraphQL schema language](http://graphql.org/learn/schema/#type-language) as follows:
 
 ```js
@@ -53,7 +52,7 @@ const resolvers = {
 }
 ```
 
-> More info on [`graphql-tools`](https://github.com/apollographql/graphql-tools) resolver maps can be found on [this guide](http://dev.apollodata.com/tools/graphql-tools/resolvers.html).
+> More info on `graphql-tools` resolver maps can be found on [this guide](http://dev.apollodata.com/tools/graphql-tools/resolvers.html).
 
 Finally, you combine the type definitions and the resolvers into an *executable schema* using `makeExecutableSchema` helper:
 
@@ -103,7 +102,7 @@ graphql(schema, query).then(result => {
 })
 ```
 
-Done! We can resolve GraphQL. The code so far can be bundled using [webpack](https://webpack.github.io/) or whatever tool you use to build your code to be executed in the browser, and it will work just fine.
+Done! We can resolve GraphQL. The code so far can be bundled using [webpack](https://webpack.github.io/) or whatever tool you use to build your code to be executed in the browser, and it will work just fine, printing what is supposed to be printed to your console.
 
 > I've created a repository to serve as code reference for this post. It's [available on GitHub](https://github.com/lucasconstantino/graphql-apollo-rest-wrap), it has a ready to use building system and node server for you to try the code presented here. Checkout the tag *[1-hello-world](https://github.com/lucasconstantino/graphql-apollo-rest-wrap/tree/1-hello-world)* to see this check point.
 
@@ -205,7 +204,7 @@ Relations in GraphQL are simply more resolvers, as I expect you already know. Fo
 
 ```diff
  import { makeExecutableSchema } from 'graphql-tools'
- 
+
  const typeDefs = `
    type Post {
      id: Int!
@@ -213,35 +212,35 @@ Relations in GraphQL are simply more resolvers, as I expect you already know. Fo
      body: String
 +    author: User
    }
- 
+
    type User {
      id: Int!
      username: String
      email: String
 +    posts: [Post]
    }
- 
+
    type Query {
      posts: [Post]
      post (id: Int!): Post
      users: [User]
      user: User
    }
- 
+
    schema {
      query: Query
    }
  `
- 
+
  const endpoint = 'https://jsonplaceholder.typicode.com'
  const toJSON = res => res.json()
- 
+
  const post = (root, { id }) => fetch(`${endpoint}/posts/${id}`).then(toJSON)
  const posts = () => fetch(`${endpoint}/posts`).then(toJSON)
- 
+
  const user = (root, { id }) => fetch(`${endpoint}/users/${id}`).then(toJSON)
  const users = () => fetch(`${endpoint}/users`).then(toJSON)
- 
+
 +const author = ({ userId }) => fetch(`${endpoint}/users/${userId}`).then(toJSON)
 +const userPosts = ({ id }) => fetch(`${endpoint}/users/${id}/posts`).then(toJSON)
 +
@@ -259,7 +258,7 @@ Relations in GraphQL are simply more resolvers, as I expect you already know. Fo
 +    posts: userPosts,
 +  }
  }
- 
+
  export const schema = makeExecutableSchema({ typeDefs, resolvers })
 ```
 
@@ -295,7 +294,7 @@ Mutations in GraphQL are just more field resolvers, only with some additional be
 
 ```diff
  import { makeExecutableSchema } from 'graphql-tools'
- 
+
  const typeDefs = `
    type Post {
      id: Int!
@@ -303,21 +302,21 @@ Mutations in GraphQL are just more field resolvers, only with some additional be
      body: String
      author: User
    }
- 
+
    type User {
      id: Int!
      username: String
      email: String
      posts: [Post]
    }
- 
+
    type Query {
      posts: [Post]
      post (id: Int!): Post
      users: [User]
      user: User
    }
- 
+
 +  type Mutation {
 +    addPost(title: String!, body: String!, userId: Int!): Post!
 +  }
@@ -327,19 +326,19 @@ Mutations in GraphQL are just more field resolvers, only with some additional be
 +    mutation: Mutation
    }
  `
- 
+
  const endpoint = 'https://jsonplaceholder.typicode.com'
  const toJSON = res => res.json()
- 
+
  const post = (root, { id }) => fetch(`${endpoint}/posts/${id}`).then(toJSON)
  const posts = () => fetch(`${endpoint}/posts`).then(toJSON)
- 
+
  const user = (root, { id }) => fetch(`${endpoint}/users/${id}`).then(toJSON)
  const users = () => fetch(`${endpoint}/users`).then(toJSON)
- 
+
  const author = ({ userId }) => fetch(`${endpoint}/users/${userId}`).then(toJSON)
  const userPosts = ({ id }) => fetch(`${endpoint}/users/${id}/posts`).then(toJSON)
- 
+
 +const addPost = (root, post) => fetch(`${endpoint}/posts`, { method: 'POST', body: post })
 +  .then(toJSON).then(({ id }) => ({ id, ...post }))
 +
@@ -360,7 +359,7 @@ Mutations in GraphQL are just more field resolvers, only with some additional be
      posts: userPosts,
    }
  }
- 
+
  export const schema = makeExecutableSchema({ typeDefs, resolvers })
 ```
 
@@ -420,7 +419,7 @@ client.query({ query }).then(console.log)
 
 > If you are interested, you can find out more on the [Network layer](http://dev.apollodata.com/core/network.html) of the Apollo Client.
 
-The code above would be just fine if we had a backend serving GraphQL - which we don't. Good enough we've being building our own wrap around the REST API just earlier in this post. What we now have to do is make ApolloClient use the GraphQL schema and resolver as were we doing before:
+The code above would be just fine provided we had a backend serving GraphQL - which we don't. Good enough we've being building our own wrap around the REST API just earlier in this post. What we now have to do is make ApolloClient use the GraphQL schema and resolver as were we doing before:
 
 ```js
 import ApolloClient, { printAST } from 'apollo-client'
@@ -492,4 +491,3 @@ Ok, if you are really just starting with GraphQL you might not even know what to
 - https://github.com/Akryum/vue-apollo
 
 See ya!
-
